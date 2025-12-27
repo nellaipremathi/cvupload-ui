@@ -9,6 +9,9 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
 
+    env:
+      CLOUDFRONT_DIST_ID: ${{ secrets.CLOUDFRONT_DIST_ID }}
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -27,8 +30,8 @@ jobs:
             --exclude ".github/*"
 
       - name: Invalidate CloudFront cache
-        if: ${{ secrets.CLOUDFRONT_DIST_ID != '' }}
+        if: ${{ env.CLOUDFRONT_DIST_ID != '' }}
         run: |
           aws cloudfront create-invalidation \
-            --distribution-id ${{ secrets.CLOUDFRONT_DIST_ID }} \
+            --distribution-id "$CLOUDFRONT_DIST_ID" \
             --paths "/*"
